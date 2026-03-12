@@ -19,9 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'corretto' # Amazon Corretto Java 배포판 사용
 
-      # Step 3: Gradle로 JAR 파일 빌드 (build/libs/app.jar 생성)
+      # Step 3: Gradle 빌드 (gradlew 실행 권한 부여 후 JAR 빌드)
       - name: Gradle 빌드
-        run: ./gradlew bootJar
+        run: |
+          chmod +x ./gradlew    # gradlew 파일에 실행 권한 부여 (Linux에서 필수)
+          ./gradlew bootJar
 
       # Step 4: Docker Hub 로그인 (이미지 Push 권한 획득)
       - name: Docker Hub 로그인
