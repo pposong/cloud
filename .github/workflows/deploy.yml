@@ -1,0 +1,52 @@
+name: CI/CD Pipeline          # 워크플로우 이름
+
+on:                           # 트리거: 언제 실행할지
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest    # GitHub Actions Runner 환경 (Ubuntu 서버)
+    steps:
+      # Step 1: GitHub에서 코드를 Runner 서버로 가져오기
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: 스프링 빌드를 위한 Java 17 설치
+      - name: Java 17 설정
+        uses: actions/setup-java@v3
+        with:                      # Action에 전달할 옵션
+          java-version: '17'
+          distribution: 'corretto' # Amazon Corretto Java 배포판 사용
+
+      # Step 3: Gradle로 JAR 파일 빌드 (build/libs/app.jar 생성)
+      - name: Gradle 빌드
+        run: ./gradlew bootJar
+
+      # Step 4: Docker Hub 로그인 (이미지 Push 권한 획득)
+      - name: Docker Hub 로그인
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # Step 5: JAR 파일을 포함한 Docker 이미지 빌드
+      - name: Docker 이미지 빌드
+        run: docker build -t pposong/cloud:latest .
+
+      # Step 6: 빌드한 이미지를 Docker Hub에 업로드
+      - name: Docker Hub Push
+        run: docker push pposong/cloud:latest
+
+      # Step 7: EC2에 SSH 접속하여 최신 이미지로 컨테이너 재실행
+      - name: EC2 배포
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}      # EC2 퍼블릭 IP
+          username: ec2-user                 # EC2 접속 유저명
+          key: ${{ secrets.EC2_KEY }}        # EC2 PEM 키
+          script: |
+            # 기존 컨테이너 중지 및 삭제 (없어도 오류 무시)
+            sudo docker stop cloud || true
+            sudo docker rm cloud || true
+            # Docker Hub에서 최신 이미지 pull
+            sudo docker pull pposong/cloud:latest
+            # 새 컨테이너 실행 (8080 포트 매핑)
+            sudo docker run -d --name cloud -p 8080:8080 pposong/cloud:latest
