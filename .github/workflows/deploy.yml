@@ -29,9 +29,9 @@ jobs:
       - name: Docker Hub 로그인
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # Step 5: JAR 파일을 포함한 Docker 이미지 빌드
+      # Step 5: JAR 파일을 포함한 Docker 이미지 빌드 (EC2 아키텍처에 맞게 linux/amd64 지정)
       - name: Docker 이미지 빌드
-        run: docker build -t pposong/cloud:latest .
+        run: docker build --platform linux/amd64 -t pposong/cloud:latest . # --platform linux/amd64 → EC2가 amd64 아키텍처이므로 맞춰서 빌드해라
 
       # Step 6: 빌드한 이미지를 Docker Hub에 업로드
       - name: Docker Hub Push
