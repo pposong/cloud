@@ -34,6 +34,6 @@ public class S3Service {
     // CloudFront 도메인 + 파일 경로 조합으로 URL 생성
     // Presigned URL 불필요 - CloudFront가 접근 제어 담당
     public String getCloudFrontUrl(String fileName) {
-        return "https://d1v1uch0vgh0vj.cloudfront.net/" + {fileName};
+        return "https://d1v1uch0vgh0vj.cloudfront.net/" + fileName;
     }
 }
