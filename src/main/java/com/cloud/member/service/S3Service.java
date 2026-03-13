@@ -30,4 +30,10 @@ public class S3Service {
     public URL getPresignedUrl(String fileName) { // resigned URL 생성 클라이언트에게 S3 이미지에 한시적 접근 권한 부여
         return s3Template.createSignedGetURL(bucketName, fileName, Duration.ofDays(7)); // 버킷이름, 파일경로, 유효기간 7일
     }
+
+    // CloudFront 도메인 + 파일 경로 조합으로 URL 생성
+    // Presigned URL 불필요 - CloudFront가 접근 제어 담당
+    public String getCloudFrontUrl(String fileName) {
+        return "https://d1v1uch0vgh0vj.cloudfront.net/" + {fileName};
+    }
 }

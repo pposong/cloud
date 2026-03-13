@@ -60,6 +60,6 @@ public class MemberService {
 
         String fileName = member.getProfileImageUrl(); // Member에서 fileName 꺼내기
 
-        return s3Service.getPresignedUrl(fileName).toString();  // .toString() URL → String 변환
+        return s3Service.getCloudFrontUrl(fileName); // getCloudFrontUrl()이 이미 String을 반환하니까 .toString() 불필요
     }
 }
