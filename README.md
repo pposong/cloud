@@ -237,5 +237,4 @@ https://camp-health-pposong-files.s3.ap-northeast-2.amazonaws.com/profiles/6aaf5
 ---
 
 ## 🐛 트러블슈팅
-
-_(트러블슈팅 내용 및 TIL 블로그 링크 첨부)_
+https://velog.io/@okokok_1/내일배움캠프-Spring-백엔드-DAY-45-과제-클라우드아키텍처-설계-배포-c8yt6wod
